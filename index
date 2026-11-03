@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbetsblad: Volym & Längdomvandling i vardagen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .page-break { page-break-before: always; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .card { border: 1px solid #cbd5e1 !important; box-shadow: none !important; break-inside: avoid; }
+            input { border-bottom: 1px solid #000 !important; background: transparent !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+
+    <!-- Header / Kontroller (Döljs vid utskrift) -->
+    <header class="max-w-4xl mx-auto mb-8 no-print bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Volym & Längdomvandling i vardagen</h1>
+                <p class="text-slate-600 text-sm mt-1">Interaktivt och utskriftsvänligt arbetsblad (110 uppgifter: 55 volym + 55 längd)</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Skriv ut / Spara PDF
+                </button>
+                <button onclick="openSubmitModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    Lämna in uppgift
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Arbetsblad Containern -->
+    <main class="max-w-4xl mx-auto bg-white p-6 md:p-12 rounded-2xl shadow-sm border border-slate-200">
+        
+        <!-- Elevinformation vid utskrift / ifyllnad -->
+        <div class="border-b border-slate-200 pb-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Arbetsblad: Volym & Längd</h1>
+                <div class="flex gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full border border-blue-200">💧 Volym</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider bg-teal-50 text-teal-700 px-2.5 py-1 rounded-full border border-teal-200">📏 Längd</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mt-4">
+                <div class="flex items-center gap-2 border-b border-slate-300 pb-1">
+                    <span class="font-medium text-slate-500">Namn:</span>
+                    <input type="text" id="student-name" class="w-full bg-transparent outline-none text-slate-900 font-semibold" placeholder="Skriv ditt namn...">
+                </div>
+                <div class="flex items-center gap-2 border-b border-slate-300 pb-1">
+                    <span class="font-medium text-slate-500">Klass:</span>
+                    <input type="text" id="student-class" class="w-full bg-transparent outline-none text-slate-900 font-semibold" placeholder="Skriv din klass...">
+                </div>
+                <div class="flex items-center gap-2 border-b border-slate-300 pb-1">
+                    <span class="font-medium text-slate-500">Datum:</span>
+                    <input type="text" id="student-date" class="w-full bg-transparent outline-none text-slate-900 font-semibold" placeholder="ÅÅÅÅ-MM-DD">
+                </div>
+            </div>
+            <!-- Inlämningsstämpel som syns vid inlämning/utskrift -->
+            <div id="submission-stamp" class="hidden mt-4 p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-sm font-medium"></div>
+        </div>
+
+        <!-- DEL 1 -->
+        <section class="mb-12">
+            <div class="bg-indigo-50/70 border-l-4 border-indigo-600 p-4 rounded-r-xl mb-6">
+                <h2 class="text-xl font-bold text-indigo-950">Del 1: l ↔ dl & m ↔ dm</h2>
+                <p class="text-sm text-indigo-800 mt-1 font-medium">Minnesregler: 1 liter (l) = 10 deciliter (dl) &nbsp;|&nbsp; 1 meter (m) = 10 decimeter (dm)</p>
+            </div>
+            <div class="space-y-4" id="del1-container"></div>
+        </section>
+
+        <!-- DEL 2 -->
+        <section class="mb-12 page-break">
+            <div class="bg-emerald-50/70 border-l-4 border-emerald-600 p-4 rounded-r-xl mb-6">
+                <h2 class="text-xl font-bold text-emerald-950">Del 2: dl ↔ cl & dm ↔ cm</h2>
+                <p class="text-sm text-emerald-800 mt-1 font-medium">Minnesregler: 1 deciliter (dl) = 10 centiliter (cl) &nbsp;|&nbsp; 1 decimeter (dm) = 10 centimeter (cm)</p>
+            </div>
+            <div class="space-y-4" id="del2-container"></div>
+        </section>
+
+        <!-- DEL 3 -->
+        <section class="mb-12 page-break">
+            <div class="bg-amber-50/70 border-l-4 border-amber-600 p-4 rounded-r-xl mb-6">
+                <h2 class="text-xl font-bold text-amber-950">Del 3: l ↔ cl & m ↔ cm</h2>
+                <p class="text-sm text-amber-800 mt-1 font-medium">Minnesregler: 1 liter (l) = 100 centiliter (cl) &nbsp;|&nbsp; 1 meter (m) = 100 centimeter (cm)</p>
+            </div>
+            <div class="space-y-4" id="del3-container"></div>
+        </section>
+
+        <!-- DEL 4 -->
+        <section class="mb-12 page-break">
+            <div class="bg-purple-50/70 border-l-4 border-purple-600 p-4 rounded-r-xl mb-6">
+                <h2 class="text-xl font-bold text-purple-950">Del 4: Avancerade flerstegsutmaningar (Uppgift 91–110)</h2>
+                <p class="text-sm text-purple-800 mt-1 font-medium">Krävande vardagsproblem som kombinerar beräkningar och omvandlingar i flera led!</p>
+            </div>
+            <div class="space-y-4" id="del4-container"></div>
+        </section>
+
+        <!-- Inlämningsknapp längst ner på sidan -->
+        <div class="mt-12 pt-8 border-t border-slate-200 text-center no-print">
+            <button onclick="openSubmitModal()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl transition shadow-md inline-flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Rätta & Lämna in till läraren
+            </button>
+        </div>
+    </main>
+
+    <!-- Modal för Inlämning & Automatisk Rättning -->
+    <div id="submit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 md:p-8 relative border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeSubmitModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1" title="Stäng">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="text-center mb-5">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900">Arbetsbladet är rättat!</h3>
+                <p class="text-sm text-slate-600 mt-1">Automatisk kontroll mot facit slutförd</p>
+            </div>
+
+            <div id="modal-alert" class="hidden mb-4 p-3 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold"></div>
+
+            <!-- Resultatkort med färgade mätare -->
+            <div class="mb-5 p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center text-sm border-b border-slate-200 pb-2">
+                    <span class="text-slate-500 font-medium">Elev:</span>
+                    <span id="modal-student-name" class="font-bold text-slate-900 text-base">-</span>
+                </div>
+                <div class="flex justify-between items-center text-sm border-b border-slate-200 pb-2">
+                    <span class="text-slate-500 font-medium">Klass:</span>
+                    <span id="modal-student-class" class="font-bold text-slate-900">-</span>
+                </div>
+
+                <!-- Betyg / Poängmätare -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 text-center">
+                    <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-1">Ditt Resultat</span>
+                    <div id="modal-score-badge" class="text-2xl font-extrabold text-emerald-600">0 / 110 rätt (0%)</div>
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mt-2.5">
+                        <div id="modal-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-center text-xs font-bold pt-1">
+                    <div class="bg-emerald-50 text-emerald-700 py-2 rounded-xl border border-emerald-200 flex items-center justify-center gap-1.5">
+                        <span class="text-base">✅</span> <span id="modal-correct-count">0 Rätta</span>
+                    </div>
+                    <div class="bg-rose-50 text-rose-700 py-2 rounded-xl border border-rose-200 flex items-center justify-center gap-1.5">
+                        <span class="text-base">❌</span> <span id="modal-wrong-count">0 Fel / Ej svar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Lärarens e-postadress</label>
+                    <input type="email" id="teacher-email" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="larare@skola.se">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <button onclick="sendEmail()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Maila läraren
+                    </button>
+                    <button onclick="copySubmissionText()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        Kopiera rättning
+                    </button>
+                </div>
+
+                <button onclick="printWithSubmissionStamp()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl text-sm transition flex items-center justify-center gap-2 border border-slate-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Spara PDF / Skriv ut med facit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Osynlig textarea för urklipp -->
+    <textarea id="clipboard-textarea" class="sr-only absolute left-[-9999px]" aria-hidden="true"></textarea>
+
+    <script>
+        // Del 1: l <-> dl (udda) & m <-> dm (jämna) | 1 l = 10 dl & 1 m = 10 dm
+        const questionsDel1 = [
+            { id: 1, text: "Anna har 1 liter mjölk i sitt kylskåp. Hur många deciliter är det?", ans: "10 dl", num: 10 },
+            { id: 2, text: "Oskar köper ett rep som är 2 meter långt. Hur många decimeter är det?", ans: "20 dm", num: 20 },
+            { id: 3, text: "En vattenflaska rymmer 3 liter vatten. Hur många deciliter är det?", ans: "30 dl", num: 30 },
+            { id: 4, text: "Sara snickrar en hylla som är 5 meter lång. Hur många decimeter är det?", ans: "50 dm", num: 50 },
+            { id: 5, text: "I en hink finns det 8 liter vatten. Hur många deciliter vatten finns i hinken?", ans: "80 dl", num: 80 },
+            { id: 6, text: "En trädgårdsgång är 4 meter lång. Hur många decimeter är den?", ans: "40 dm", num: 40 },
+            { id: 7, text: "Erik dricker 7 liter vatten under en vecka. Hur många deciliter motsvarar det?", ans: "70 dl", num: 70 },
+            { id: 8, text: "En rulle tyg är 10 meter lång. Hur många decimeter tyg är det?", ans: "100 dm", num: 100 },
+            { id: 9, text: "En stor kastrull rymmer 6 liter vatten. Hur många deciliter rymmer den?", ans: "60 dl", num: 60 },
+            { id: 10, text: "Maja mäter upp ett hopprep som är 9 meter långt. Hur många decimeter är det?", ans: "90 dm", num: 90 },
+            { id: 11, text: "En soppkittel på restaurangen rymmer 12 liter. Hur många deciliter soppa rymmer den?", ans: "120 dl", num: 120 },
+            { id: 12, text: "Snickaren sågar till en planka på 15 meter. Hur många decimeter är det?", ans: "150 dm", num: 150 },
+            { id: 13, text: "En läskflaska innehåller 0,5 liter. Hur många deciliter är det?", ans: "5 dl", num: 5 },
+            { id: 14, text: "Maria har dragit ut ett måttband till 1,5 meter. Hur många decimeter är det?", ans: "15 dm", num: 15 },
+            { id: 15, text: "En tillbringare rymmer 2,5 liter saft. Hur många deciliter är det?", ans: "25 dl", num: 25 },
+            { id: 16, text: "En liten trälist är 0,2 meter lång. Hur många decimeter är det?", ans: "2 dm", num: 2 },
+            { id: 17, text: "Det finns 0,8 liter mjölk kvar i paketet. Hur många deciliter är det?", ans: "8 dl", num: 8 },
+            { id: 18, text: "Ett matsalsbord är 3,5 meter långt. Hur många decimeter är det?", ans: "35 dm", num: 35 },
+            { id: 19, text: "En regntunna innehåller 20 liter vatten. Hur många deciliter är det?", ans: "200 dl", num: 200 },
+            { id: 20, text: "En vattenslang är 4,2 meter lång. Hur många decimeter är den?", ans: "42 dm", num: 42 },
+            { id: 21, text: "⭐ Lisa har 1,5 liter saft och tillverkar 0,5 liter till. Hur många deciliter saft har hon totalt?", ans: "20 dl", num: 20 },
+            { id: 22, text: "⭐ En träregel är 2 meter lång. Du sågar av 8 decimeter. Hur många decimeter lång är regeln nu?", ans: "12 dm", num: 12 },
+            { id: 23, text: "⭐ Johan har 3 liter juice. Han dricker 15 deciliter på en fest. Hur många deciliter juice har han kvar?", ans: "15 dl", num: 15 },
+            { id: 24, text: "⭐ En tygbit är 5 meter. Du har 2 likadana bitar. Hur många decimeter tyg är det sammanlagt?", ans: "100 dm", num: 100 },
+            { id: 25, text: "⭐ Maja häller 0,4 liter saft i ett glas och 0,6 liter saft i ett annat glas. Hur många deciliter hällde hon upp totalt?", ans: "10 dl", num: 10 },
+            { id: 26, text: "⭐ En bräda är 2,5 meter lång. Tre personer sågar av 4 decimeter var. Hur många decimeter av brädan finns kvar?", ans: "13 dm", num: 13 },
+            { id: 27, text: "⭐ Erik köper 4 flaskor vatten som rymmer 0,5 liter vardera. Hur många deciliter vatten har han köpt totalt?", ans: "20 dl", num: 20 },
+            { id: 28, text: "⭐ Ett staket ska bli 15 meter långt. Man har byggt 90 decimeter. Hur många decimeter saknas innan det är helt klart?", ans: "60 dm", num: 60 },
+            { id: 29, text: "⭐ Kocken har 0,8 liter grädde och köper 1,2 liter till. Hur många deciliter grädde har kocken totalt?", ans: "20 dl", num: 20 },
+            { id: 30, text: "⭐ En flagglina är 25 meter lång. Den delas exakt mitt itu. Hur många decimeter lång är varje halva?", ans: "125 dm", num: 125 }
+        ];
+
+        // Del 2: dl <-> cl (udda) & dm <-> cm (jämna) | 1 dl = 10 cl & 1 dm = 10 cm
+        const questionsDel2 = [
+            { id: 31, text: "Ett litet glas rymmer 1 deciliter vatten. Hur många centiliter är det?", ans: "10 cl", num: 10 },
+            { id: 32, text: "En tändsticka för braskaminen är 2 decimeter lång. Hur många centimeter är det?", ans: "20 cm", num: 20 },
+            { id: 33, text: "Lisa mäter upp 5 deciliter mjölk till pannkakssmeten. Hur många centiliter är det?", ans: "50 cl", num: 50 },
+            { id: 34, text: "En skollinjal är 4 decimeter lång. Hur många centimeter är den?", ans: "40 cm", num: 40 },
+            { id: 35, text: "Ett stort glas rymmer 7 deciliter läsk. Hur många centiliter är det?", ans: "70 cl", num: 70 },
+            { id: 36, text: "En bokrygg är 3 decimeter hög. Hur många centimeter är det?", ans: "30 cm", num: 30 },
+            { id: 37, text: "Ett mått innehåller 9 deciliter grädde. Hur många centiliter är det?", ans: "90 cl", num: 90 },
+            { id: 38, text: "En blomkruka är 6 decimeter bred. Hur många centimeter är det?", ans: "60 cm", num: 60 },
+            { id: 39, text: "En flaska innehåller 8 deciliter vatten. Hur många centiliter är det?", ans: "80 cl", num: 80 },
+            { id: 40, text: "En trälist är 10 decimeter lång. Hur många centimeter är det?", ans: "100 cm", num: 100 },
+            { id: 41, text: "En kastrull rymmer 12 deciliter buljong. Hur många centiliter är det?", ans: "120 cl", num: 120 },
+            { id: 42, text: "En affisch är 15 decimeter hög. Hur många centimeter är den?", ans: "150 cm", num: 150 },
+            { id: 43, text: "Kocken behöver 0,5 deciliter matolja. Hur många centiliter är det?", ans: "5 cl", num: 5 },
+            { id: 44, text: "En blyertspenna är 1,5 decimeter lång. Hur många centimeter är det?", ans: "15 cm", num: 15 },
+            { id: 45, text: "En te-mugg rymmer 2,5 deciliter te. Hur många centiliter är det?", ans: "25 cl", num: 25 },
+            { id: 46, text: "En liten skruv är 0,1 decimeter lång. Hur många centimeter är det?", ans: "1 cm", num: 1 },
+            { id: 47, text: "Ett mått innehåller 0,8 deciliter vatten. Hur många centiliter är det?", ans: "8 cl", num: 8 },
+            { id: 48, text: "En surfplatta är 3,5 decimeter lång. Hur många centimeter är den?", ans: "35 cm", num: 35 },
+            { id: 49, text: "En behållare rymmer 20 deciliter vätska. Hur många centiliter är det?", ans: "200 cl", num: 200 },
+            { id: 50, text: "En skohylla är 4,5 decimeter djup. Hur många centimeter är det?", ans: "45 cm", num: 45 },
+            { id: 51, text: "⭐ Emma har 3 deciliter saft och häller i 4 deciliter till. Hur många centiliter saft har hon totalt?", ans: "70 cl", num: 70 },
+            { id: 52, text: "⭐ Ett presentsnöre är 8 decimeter långt från början. Du klipper bort 25 centimeter. Hur många centimeter snöre finns kvar?", ans: "55 cm", num: 55 },
+            { id: 53, text: "⭐ Bagaren använder 4 deciliter mjölk i en smet och 2,5 deciliter i en annan. Hur många centiliter går det åt totalt?", ans: "65 cl", num: 65 },
+            { id: 54, text: "⭐ Du har ett band som är 10 decimeter långt. Du klipper av 30 centimeter till ett bokmärke. Hur många centimeter band finns kvar?", ans: "70 cm", num: 70 },
+            { id: 55, text: "⭐ En skål rymmer 15 deciliter soppa. Fyra kompisar äter 20 centiliter soppa var. Hur många centiliter soppa är kvar i skålen?", ans: "70 cl", num: 70 },
+            { id: 56, text: "⭐ Oskar har 5 byggpinnar som är 2 decimeter långa vardera. Han lägger dem i en lång rad. Hur många centimeter lång blir raden?", ans: "100 cm", num: 100 },
+            { id: 57, text: "⭐ En termos rymmer 12 deciliter kaffe. Om tre personer dricker 25 centiliter kaffe var, hur många centiliter kaffe finns kvar?", ans: "45 cl", num: 45 },
+            { id: 58, text: "⭐ Lisa har en tygremsa på 1,5 decimeter och syr ihop den med en på 0,5 decimeter. Hur många centimeter lång blir remsan totalt?", ans: "20 cm", num: 20 },
+            { id: 59, text: "⭐ En flaska rymmer 6 deciliter vatten. Du dricker upp exakt hälften. Hur många centiliter vatten har du druckit?", ans: "30 cl", num: 30 },
+            { id: 60, text: "⭐ Snickaren behöver en list på 8 decimeter. Han har redan sågat till en bit på 35 centimeter. Hur många centimeter list till behöver han såga till?", ans: "45 cm", num: 45 }
+        ];
+
+        // Del 3: l <-> cl (udda) & m <-> cm (jämna) | 1 l = 100 cl & 1 m = 100 cm
+        const questionsDel3 = [
+            { id: 61, text: "En flaska rymmer 1 liter vatten. Hur många centiliter är det?", ans: "100 cl", num: 100 },
+            { id: 62, text: "En dörrkarm är 2 meter hög. Hur många centimeter är den?", ans: "200 cm", num: 200 },
+            { id: 63, text: "En hink rymmer 3 liter vatten. Hur många centiliter är det?", ans: "300 cl", num: 300 },
+            { id: 64, text: "En hallmatta är 5 meter lång. Hur många centimeter är den?", ans: "500 cm", num: 500 },
+            { id: 65, text: "Bilen behöver 4 liter spolarvätska. Hur många centiliter är det?", ans: "400 cl", num: 400 },
+            { id: 66, text: "En förlängningssladd är 6 meter lång. Hur många centimeter är den?", ans: "600 cm", num: 600 },
+            { id: 67, text: "En blomkruka rymmer 8 liter jord. Hur många centiliter motsvarar det?", ans: "800 cl", num: 800 },
+            { id: 68, text: "Ett staket är 7 meter långt. Hur många centimeter är staketet?", ans: "700 cm", num: 700 },
+            { id: 69, text: "En hink rymmer 9 liter vatten. Hur många centiliter är det?", ans: "900 cl", num: 900 },
+            { id: 70, text: "En gymnastiksal har en sprintsträcka på 10 meter. Hur många centimeter är det?", ans: "1000 cm", num: 1000 },
+            { id: 71, text: "En liten läskflaska rymmer 0,5 liter. Hur många centiliter är det?", ans: "50 cl", num: 50 },
+            { id: 72, text: "En skidstav är 1,5 meter lång. Hur många centimeter är den?", ans: "150 cm", num: 150 },
+            { id: 73, text: "En dunk innehåller 2,5 liter olja. Hur många centiliter är det?", ans: "250 cl", num: 250 },
+            { id: 74, text: "En liten kvist är 0,1 meter lång. Hur många centimeter är den?", ans: "10 cm", num: 10 },
+            { id: 75, text: "Ett juicepaket innehåller 0,2 liter juice. Hur många centiliter är det?", ans: "20 cl", num: 20 },
+            { id: 76, text: "En köksbänk är 0,7 meter djup. Hur många centimeter är den?", ans: "70 cm", num: 70 },
+            { id: 77, text: "En stor termos rymmer 3,5 liter soppa. Hur många centiliter är det?", ans: "350 cl", num: 350 },
+            { id: 78, text: "En matematikbok är 0,25 meter bred. Hur många centimeter är boken?", ans: "25 cm", num: 25 },
+            { id: 79, text: "En flaska rymmer 0,75 liter saft. Hur många centiliter är det?", ans: "75 cl", num: 75 },
+            { id: 80, text: "En flaggstångslina är 12 meter lång. Hur många centimeter är den?", ans: "1200 cm", num: 1200 },
+            { id: 81, text: "⭐ Emma har 0,3 liter saft i en flaska och fyller på med 0,4 liter till. Hur många centiliter saft har hon totalt?", ans: "70 cl", num: 70 },
+            { id: 82, text: "⭐ Anton har en trälist som är 1,2 meter lång. Han sågar bort 40 centimeter. Hur många centimeter list finns det kvar?", ans: "80 cm", num: 80 },
+            { id: 83, text: "⭐ En behållare rymmer 4,5 liter vätska. Om du har två sådana behållare, hur många centiliter har du totalt?", ans: "900 cl", num: 900 },
+            { id: 84, text: "⭐ Stina köper 3 tygbitar som är 0,25 meter långa var. Hur många centimeter tyg har hon köpt sammanlagt?", ans: "75 cm", num: 75 },
+            { id: 85, text: "⭐ En stor hink rymmer 15 liter vatten. Du öser med en skopa som rymmer 50 centiliter. Hur många skopor krävs för att tömma hinken?", ans: "30 skopor", num: 30 },
+            { id: 86, text: "⭐ David har en metallvajer som är 2,5 meter lång. Han kapar bort 150 centimeter. Hur många centimeter vajer finns kvar?", ans: "100 cm", num: 100 },
+            { id: 87, text: "⭐ Sara blandar bål: 0,75 liter läsk, 0,25 liter juice och 50 centiliter mineralvatten. Hur många centiliter bål får hon totalt?", ans: "150 cl", num: 150 },
+            { id: 88, text: "⭐ En liten modellbil är 0,05 meter bred. Du ställer 4 bilar i bredd. Hur många centimeter bred blir raden totalt?", ans: "20 cm", num: 20 },
+            { id: 89, text: "⭐ En hink rymmer 10 liter och fylls till hälften med vatten. Sedan häller du i 250 centiliter till. Hur många centiliter vatten finns i hinken nu?", ans: "750 cl", num: 750 },
+            { id: 90, text: "⭐ En mur är 20 meter lång. Du mäter med en måttstock som är 50 centimeter lång. Hur många gånger måste du lägga ut måttstocken för att nå 20 meter?", ans: "40 gånger", num: 40 }
+        ];
+
+        // Del 4: Flerstegsutmaningar – Varannan volym (udda), varannan längd (jämna)
+        const questionsDel4 = [
+            { id: 91, text: "⭐ En saftblandning består av 1,5 liter vatten, 3 deciliter koncentrerad saft och 20 centiliter bärsaft. Hur många centiliter färdig saft blir det totalt?", ans: "200 cl", num: 200 },
+            { id: 92, text: "⭐ En hinderbana ska byggas som är 25 meter lång. Banan byggs av moduler som består av en lång del på 2 meter och en kort del på 50 centimeter (2,5 m per modul). Hur många sådana moduler behövs för hela banan?", ans: "10 gånger", num: 10 },
+            { id: 93, text: "⭐ Maja har 6 flaskor läsk som innehåller 33 centiliter var. Hon häller allt i en bålskål som rymmer 3 liter. Hur många deciliter till får det plats i skålen?", ans: "10,2 dl", num: 10.2 },
+            { id: 94, text: "⭐ Ett klätterrep är 4 meter långt. 15 scouter klipper av en bit på 20 centimeter var för att öva knopar. Hur många decimeter rep finns kvar efteråt?", ans: "10 dm", num: 10 },
+            { id: 95, text: "⭐ En regnvattentunna innehåller 45 liter vatten. Under en solig dag avdunstar 5 liter, och därefter används 120 deciliter till att vattna potatisen. Hur många liter vatten finns kvar i tunnan?", ans: "28 l", num: 28 },
+            { id: 96, text: "⭐ För att rama in 4 tavlor går det åt 6 decimeter ramlist. Du ska rama in 10 likadana tavlor. Hur många centimeter ramlist behövs totalt?", ans: "150 cm", num: 150 },
+            { id: 97, text: "⭐ En juicefabrik fyller 100 flaskor på 50 centiliter vardera och 50 flaskor på 1,5 liter vardera. Hur många liter juice har de tappat upp totalt?", ans: "125 l", num: 125 },
+            { id: 98, text: "⭐ En kabelrulle har 2,8 meter kabel. En installatör klipper av 4 bitar som är 35 centimeter långa vardera. Hur många decimeter kabel finns kvar på rullen?", ans: "14 dm", num: 14 },
+            { id: 99, text: "⭐ Kocken har 0,5 liter vispgrädde. Han häller först 15 centiliter i en paj och sedan 2 deciliter i en sås. Hur många centiliter grädde finns det kvar?", ans: "15 cl", num: 15 },
+            { id: 100, text: "⭐ Två radiostyrda bilar startar mot varandra på en 120 meter lång bana. Bil A kör 5 meter per sekund och Bil B kör 30 decimeter per sekund. Hur många sekunder tar det innan de möts?", ans: "15 sekunder", num: 15 },
+            { id: 101, text: "⭐ Viktor köper tre flaskor dryck: en på 1 liter, en på 75 centiliter och en på 5 deciliter. Hur många centiliter dryck har han sammanlagt?", ans: "225 cl", num: 225 },
+            { id: 102, text: "⭐ I träslöjden sätter Lisa ihop tre lister: en bit på 2,5 decimeter, en på 15 centimeter och en på 10 centimeter. Hur många decimeter lång blir hela listen sammanlagt?", ans: "5 dm", num: 5 },
+            { id: 103, text: "⭐ En kaffebryggare brygger 1,2 liter kaffe. Kaffet hälls upp i muggar som rymmer 15 centiliter var. Hur många fulla muggar räcker bryggningen till?", ans: "8 muggar", num: 8 },
+            { id: 104, text: "⭐ En korridor är 2 meter (20 decimeter) bred. En städrobot gör rent 4 decimeter i bredd för varje sträcka den åker. Hur många vändor måste den köra för att täcka hela korridorens bredd?", ans: "5 vändor", num: 5 },
+            { id: 105, text: "⭐ Ett café serverar 30 glas lemonad per dag. Varje glas innehåller 25 centiliter. Hur många liter lemonad serveras under en 4-dagarsperiod?", ans: "30 l", num: 30 },
+            { id: 106, text: "⭐ En timmerstock är 8 meter lång. Tre bitar sågas bort: Bit 1 är 75 cm, Bit 2 är 50 cm och Bit 3 är 1,2 meter (120 cm). Hur många centimeter av stocken finns kvar?", ans: "555 cm", num: 555 },
+            { id: 107, text: "⭐ En soppgryta innehåller 6 liter grönsakssoppa. Kocken portionerar upp all soppa jämnt i 15 skålar. Hur många centiliter soppa blir det i varje skål?", ans: "40 cl", num: 40 },
+            { id: 108, text: "⭐ En tapetrulle kräver 4 centimeter överlappning per 1 meter väggbredd. Hur många centimeter överlappning blir det totalt på en vägg som är 3,5 meter lång?", ans: "14 cm", num: 14 },
+            { id: 109, text: "⭐ En dunk på 5 liter spolarvätska är full. Du häller 1,5 liter i ena bilen och 80 centiliter i den andra. Hur många deciliter spolarvätska är kvar i dunken?", ans: "27 dl", num: 27 },
+            { id: 110, text: "⭐ Till ett stängsel behövs 10 meter ståltråd. Du har redan skarvat ihop en tråd på 45 decimeter och en på 350 centimeter. Hur många meter tråd saknas för att nå 10 meter?", ans: "2 m", num: 2 }
+        ];
+
+        function renderQuestions(items, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            items.forEach(q => {
+                const isVolume = q.id % 2 !== 0;
+                const typeBadge = isVolume 
+                    ? `<span class="inline-flex items-center text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">💧 Volym</span>`
+                    : `<span class="inline-flex items-center text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">📏 Längd</span>`;
+
+                const card = document.createElement('div');
+                card.id = `card-${q.id}`;
+                card.className = "card p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition bg-white";
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-indigo-600 font-bold text-sm">${q.id}.</span>
+                                ${typeBadge}
+                            </div>
+                            <p class="font-semibold text-slate-900 text-sm leading-relaxed">${q.text}</p>
+                            <div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+                                <span class="text-xs font-semibold text-slate-400">Svar:</span>
+                                <input type="text" id="ans-${q.id}" class="w-40 border-b-2 border-slate-300 focus:border-indigo-600 outline-none font-bold text-slate-900 px-1 py-0.5 text-sm transition" placeholder="">
+                                <span id="feedback-${q.id}" class="hidden text-xs font-bold px-2 py-0.5 rounded-full"></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        renderQuestions(questionsDel1, 'del1-container');
+        renderQuestions(questionsDel2, 'del2-container');
+        renderQuestions(questionsDel3, 'del3-container');
+        renderQuestions(questionsDel4, 'del4-container');
+
+        // Sätt dagens datum automatiskt
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('student-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = today;
+            }
+        });
+
+        // Intelligent rättningsfunktion: Godkänner med eller utan enhet, kommatecken, punkt och variationer i ord
+        function checkAnswer(rawInput, question) {
+            if (!rawInput || !rawInput.trim()) return false;
+            
+            const input = rawInput.trim().toLowerCase().replace(',', '.');
+            const targetAns = question.ans.toLowerCase().replace(',', '.');
+
+            // Exakt matchning efter normalisering av mellanslag
+            const cleanInput = input.replace(/\s+/g, ' ');
+            const cleanTarget = targetAns.replace(/\s+/g, ' ');
+            if (cleanInput === cleanTarget) return true;
+
+            // Extrahera siffror och jämför
+            const inputNumMatch = input.match(/-?\d+(\.\d+)?/);
+            if (inputNumMatch && typeof question.num === 'number') {
+                const inputNum = parseFloat(inputNumMatch[0]);
+                if (Math.abs(inputNum - question.num) < 0.001) {
+                    const nonNumPart = input.replace(inputNumMatch[0], '').replace(/\s+/g, '').replace(/[\.,]/g, '');
+                    
+                    // Om eleven bara skrivit siffran (t.ex. "10" istället för "10 dl" eller "10 dm")
+                    if (nonNumPart === '') return true;
+
+                    // Volymenheter
+                    if (cleanTarget.includes('dl') && (nonNumPart === 'dl' || nonNumPart === 'deciliter')) return true;
+                    if (cleanTarget.includes('cl') && (nonNumPart === 'cl' || nonNumPart === 'centiliter')) return true;
+                    if (cleanTarget.includes('l') && !cleanTarget.includes('cl') && !cleanTarget.includes('dl') && (nonNumPart === 'l' || nonNumPart === 'liter')) return true;
+
+                    // Längdenheter
+                    if (cleanTarget.includes('dm') && (nonNumPart === 'dm' || nonNumPart === 'decimeter')) return true;
+                    if (cleanTarget.includes('cm') && (nonNumPart === 'cm' || nonNumPart === 'centimeter')) return true;
+                    if (cleanTarget.includes('m') && !cleanTarget.includes('dm') && !cleanTarget.includes('cm') && (nonNumPart === 'm' || nonNumPart === 'meter')) return true;
+
+                    // Ord-enheter och beteckningar
+                    if (cleanTarget.includes('gång') && (nonNumPart.startsWith('gång') || nonNumPart === 'ggr')) return true;
+                    if (cleanTarget.includes('skop') && nonNumPart.startsWith('skop')) return true;
+                    if (cleanTarget.includes('flask') && nonNumPart.startsWith('flask')) return true;
+                    if (cleanTarget.includes('mugg') && nonNumPart.startsWith('mugg')) return true;
+                    if (cleanTarget.includes('timm') && (nonNumPart.startsWith('timm') || nonNumPart === 'h')) return true;
+                    if (cleanTarget.includes('minut') && nonNumPart.startsWith('min')) return true;
+                    if (cleanTarget.includes('sekund') && (nonNumPart.startsWith('sek') || nonNumPart === 's')) return true;
+                    if (cleanTarget.includes('vänd') && nonNumPart.startsWith('vänd')) return true;
+                }
+            }
+            return false;
+        }
+
+        // Utvärdera hela provet
+        function evaluateTest() {
+            const allQuestions = [...questionsDel1, ...questionsDel2, ...questionsDel3, ...questionsDel4];
+            let answeredCount = 0;
+            let correctCount = 0;
+            const details = [];
+
+            allQuestions.forEach(q => {
+                const input = document.getElementById(`ans-${q.id}`);
+                const val = input ? input.value.trim() : '';
+                const isAnswered = val !== '';
+                if (isAnswered) answeredCount++;
+
+                const isCorrect = checkAnswer(val, q);
+                if (isCorrect) correctCount++;
+
+                details.push({
+                    id: q.id,
+                    questionText: q.text,
+                    userAns: val,
+                    correctAns: q.ans,
+                    isCorrect: isCorrect,
+                    isAnswered: isAnswered,
+                    isVolume: q.id % 2 !== 0
+                });
+            });
+
+            return {
+                total: allQuestions.length,
+                answered: answeredCount,
+                correct: correctCount,
+                wrong: allQuestions.length - correctCount,
+                percent: Math.round((correctCount / allQuestions.length) * 100),
+                details: details
+            };
+        }
+
+        // Markera visuellt på elevens arbetsblad
+        function applyVisualGrading(evaluation) {
+            evaluation.details.forEach(item => {
+                const card = document.getElementById(`card-${item.id}`);
+                const input = document.getElementById(`ans-${item.id}`);
+                const badge = document.getElementById(`feedback-${item.id}`);
+                if (!card || !badge || !input) return;
+
+                badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800', 'bg-slate-100', 'text-slate-600');
+                card.classList.remove('border-emerald-400', 'border-rose-400', 'bg-emerald-50/20', 'bg-rose-50/20');
+
+                if (item.isCorrect) {
+                    badge.innerHTML = `✅ Rätt!`;
+                    badge.classList.add('bg-emerald-100', 'text-emerald-800');
+                    card.classList.add('border-emerald-400', 'bg-emerald-50/20');
+                    input.classList.add('text-emerald-700', 'border-emerald-500');
+                } else if (item.isAnswered) {
+                    badge.innerHTML = `❌ Fel! (Facit: ${item.correctAns})`;
+                    badge.classList.add('bg-rose-100', 'text-rose-800');
+                    card.classList.add('border-rose-400', 'bg-rose-50/20');
+                    input.classList.add('text-rose-700', 'border-rose-500');
+                } else {
+                    badge.innerHTML = `⚪ Ej besvarad (Facit: ${item.correctAns})`;
+                    badge.classList.add('bg-slate-100', 'text-slate-600');
+                    card.classList.add('border-slate-300');
+                }
+            });
+        }
+
+        function openSubmitModal() {
+            const name = document.getElementById('student-name').value.trim();
+            const klass = document.getElementById('student-class').value.trim();
+            const modalAlert = document.getElementById('modal-alert');
+
+            if (!name) {
+                modalAlert.textContent = "⚠️ Skriv ditt namn högst upp på sidan innan du lämnar in!";
+                modalAlert.classList.remove('hidden');
+            } else {
+                modalAlert.classList.add('hidden');
+            }
+
+            const evalRes = evaluateTest();
+
+            applyVisualGrading(evalRes);
+
+            document.getElementById('modal-student-name').textContent = name || "(Inget namn angivet)";
+            document.getElementById('modal-student-class').textContent = klass || "(Ingen klass angiven)";
+            
+            const scoreBadge = document.getElementById('modal-score-badge');
+            scoreBadge.textContent = `${evalRes.correct} av ${evalRes.total} rätt (${evalRes.percent}%)`;
+            scoreBadge.className = evalRes.percent >= 80 ? 'text-2xl font-extrabold text-emerald-600' : (evalRes.percent >= 50 ? 'text-2xl font-extrabold text-amber-600' : 'text-2xl font-extrabold text-rose-600');
+
+            const progressBar = document.getElementById('modal-progress-bar');
+            progressBar.style.width = `${evalRes.percent}%`;
+            progressBar.className = evalRes.percent >= 80 ? 'bg-emerald-500 h-full transition-all duration-500' : (evalRes.percent >= 50 ? 'bg-amber-500 h-full transition-all duration-500' : 'bg-rose-500 h-full transition-all duration-500');
+
+            document.getElementById('modal-correct-count').textContent = `${evalRes.correct} Rätta svar`;
+            document.getElementById('modal-wrong-count').textContent = `${evalRes.wrong} Fel / Ej svar`;
+
+            document.getElementById('submit-modal').classList.remove('hidden');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submit-modal').classList.add('hidden');
+        }
+
+        function getGradedSubmissionSummaryText() {
+            const name = document.getElementById('student-name').value.trim() || 'Okänd elev';
+            const klass = document.getElementById('student-class').value.trim() || 'Ej angiven';
+            const date = document.getElementById('student-date').value.trim() || new Date().toISOString().split('T')[0];
+            const evalRes = evaluateTest();
+
+            // Räkna ut resultat för volym, längd, de fyra delarna samt lista alla fel
+            let volCorrect = 0;
+            let lenCorrect = 0;
+            let p1Correct = 0, p2Correct = 0, p3Correct = 0, p4Correct = 0;
+            const wrongItems = [];
+
+            evalRes.details.forEach(item => {
+                if (item.isCorrect) {
+                    if (item.isVolume) volCorrect++;
+                    else lenCorrect++;
+
+                    if (item.id <= 30) p1Correct++;
+                    else if (item.id <= 60) p2Correct++;
+                    else if (item.id <= 90) p3Correct++;
+                    else p4Correct++;
+                } else {
+                    wrongItems.push(`Nr ${item.id} (${item.isVolume ? '💧 Volym' : '📏 Längd'})`);
+                }
+            });
+
+            const volPercent = Math.round((volCorrect / 55) * 100);
+            const lenPercent = Math.round((lenCorrect / 55) * 100);
+
+            const wrongSummary = wrongItems.length > 0 
+                ? `${wrongItems.length} st fel/obesvarade:\n  → ${wrongItems.join(', ')}`
+                : 'Inga fel! Eleven hade alla 110 uppgifter helt rätt! 🎉';
+
+            let text = `============================================================\n` +
+                       `📊 SNABBÖVERBLICK – RESULTAT\n` +
+                       `============================================================\n` +
+                       `Elev:     ${name}\n` +
+                       `Klass:    ${klass}\n` +
+                       `Datum:    ${date}\n` +
+                       `------------------------------------------------------------\n` +
+                       `🏆 TOTALPOÄNG: ${evalRes.correct} av ${evalRes.total} rätt (${evalRes.percent}%)\n` +
+                       `💧 Volym (55 uppg):  ${volCorrect} / 55 rätt (${volPercent}%)\n` +
+                       `📏 Längd (55 uppg):  ${lenCorrect} / 55 rätt (${lenPercent}%)\n` +
+                       `------------------------------------------------------------\n` +
+                       `RESULTAT PER DEL:\n` +
+                       `• Del 1 (l ↔ dl & m ↔ dm):   ${p1Correct} / 30 rätt\n` +
+                       `• Del 2 (dl ↔ cl & dm ↔ cm):  ${p2Correct} / 30 rätt\n` +
+                       `• Del 3 (l ↔ cl & m ↔ cm):   ${p3Correct} / 30 rätt\n` +
+                       `• Del 4 (Flerstegsproblem):   ${p4Correct} / 20 rätt\n` +
+                       `------------------------------------------------------------\n` +
+                       `⚠️ ATT FÖLJA UPP:\n` +
+                       `${wrongSummary}\n` +
+                       `============================================================\n\n` +
+                       `DETALJERAD RÄTTNING (ALLA 110 UPPGIFTER):\n` +
+                       `------------------------------------------------------------\n`;
+
+            evalRes.details.forEach(item => {
+                const icon = item.isVolume ? '💧' : '📏';
+                if (item.isCorrect) {
+                    text += `✅ Uppgift ${item.id} [${icon}]: "${item.userAns}" — RÄTT\n`;
+                } else if (item.isAnswered) {
+                    text += `❌ Uppgift ${item.id} [${icon}]: "${item.userAns}" — FEL (Facit: ${item.correctAns})\n`;
+                } else {
+                    text += `⚪ Uppgift ${item.id} [${icon}]: (Ej besvarad) — (Facit: ${item.correctAns})\n`;
+                }
+            });
+
+            return text;
+        }
+
+        function sendEmail() {
+            const teacherEmail = document.getElementById('teacher-email').value.trim();
+            const name = document.getElementById('student-name').value.trim() || 'Elev';
+            const evalRes = evaluateTest();
+            const body = encodeURIComponent(getGradedSubmissionSummaryText());
+            const subject = encodeURIComponent(`Rättad inlämning: Volym & Längd - ${name} (${evalRes.correct}/${evalRes.total} rätt)`);
+
+            window.location.href = `mailto:${teacherEmail}?subject=${subject}&body=${body}`;
+        }
+
+        function copySubmissionText() {
+            const summaryText = getGradedSubmissionSummaryText();
+            const textArea = document.getElementById('clipboard-textarea');
+            textArea.value = summaryText;
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification("Rättat resultat har kopierats med ✅ och ❌! Du kan klistra in det i Google Classroom, Teams eller e-post.");
+            } catch (err) {
+                showNotification("Kunde inte kopiera automatiskt.");
+            }
+        }
+
+        function printWithSubmissionStamp() {
+            const name = document.getElementById('student-name').value.trim() || 'Elev';
+            const date = document.getElementById('student-date').value.trim();
+            const evalRes = evaluateTest();
+            
+            applyVisualGrading(evalRes);
+
+            const stamp = document.getElementById('submission-stamp');
+            stamp.innerHTML = `<strong>Rättat resultat:</strong> Elev: <strong>${name}</strong> | Datum: ${date} | Resultat: <strong>${evalRes.correct}/${evalRes.total} rätt (${evalRes.percent}%)</strong> ✅`;
+            stamp.classList.remove('hidden');
+
+            closeSubmitModal();
+            window.print();
+        }
+
+        function showNotification(msg) {
+            let toast = document.getElementById('toast-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast-notification';
+                toast.className = 'fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium z-50 transition transform duration-300 translate-y-10 opacity-0 max-w-md';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 4500);
+        }
+    </script>
+</body>
+</html>
